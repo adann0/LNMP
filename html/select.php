@@ -1,3 +1,5 @@
+// Exemple PHP via PDO sur une Base de Donnée MySQL qui vérifie un mot de passe hash avec Bcrypt
+
 <?php
 try {
     // Connexion a la Base de Donnée
