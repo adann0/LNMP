@@ -194,7 +194,7 @@ D'autres commandes :
 
     > USE <db>;
 
-Un exemple de table pour des utilisateurs :
+Un exemple de table pour des utilisateurs, adaptée a recevoir un mot de passe hash par Bcrypt + son IV :
 
     CREATE TABLE users(
         user_id INT NOT NULL AUTO_INCREMENT,
