@@ -126,4 +126,99 @@ Linux (Raspbian) - Nginx - MySQL (MariaDB) - PHP
 
 ## Wapiti
 
+    $ sudo apt-get install wapiti
+    $ wapiti http://example.com -n 10 -b folder
+    
+## IPTables
+
+    $ sudo apt-get install iptables
+    $ chmod +x /etc/init.d/firewall
+    $ sudo update-rc.d firewall defaults
+
+## Fail2Ban
+
+    $ sudo apt-get install fail2ban
+    $ sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.conf.bak
+    $ sudo nano /etc/fail2ban/jail.local
+    
+    $ sudo mv nginx-*.conf /etc/fail2ban/filter.d
+    
+    $ sudo service fail2ban restart
+    $ sudo fail2ban-client status
+    $ sudo fail2ban-client status nginx-http-auth
+    $ sudo fail2ban-client set nginx-http-auth unbanip 1.2.3.4
+
+## NMap
+
+(Sur un laptop, pas sur le Serveur)
+
+    $ sudo apt install nmap
+    $ mkdir ~/scan_results
+    $ mkdir ~/scan_results/syn_scan
+
+    $ sudo tcpdump host 1.2.3.4 -w ~/scan_results/syn_scan/packets
+
+On peut ensuite stopper le processus avec CTRL+Z.
+
+    $ bg
+
+Et on peut lancer la commande fournie par le shell. Dans un autre shell on va lancer cette commande :
+
+    $ sudo nmap -sS -Pn -p- -T4 -vv --reason -oN ~/scan_results/syn_scan/nmap.results 1.2.3.4
+
+    $ fg
+
+On peut stopper avec CTRL+C. Et regarder les résultats avec :
+
+    $ less ~/scan_results/syn_scan/nmap.results
+
+D'autres commandes :
+
+    $ sudo tcpdump -nn -r ~/scan_results/syn_scan/packets 'dst 1.2.3.4' | less
+    $ sudo nmap -O -Pn -vv --reason -oN ~/scan_results/versions/os_version.nmap 1.2.3.4
+
+
+## MySQL (MariaDB)
+
+    $ sudo apt install mysql-server
+    $ sudo mysql_secure_installation
+
+    $ sudo mysql -u root
+
+    > CREATE DATABASE <db>;
+    > SHOW DATABASES;
+
+    > CREATE USER '<user>'@’%’ IDENTIFIED BY '<password>';
+    > GRANT ALL PRIVILEGES ON <db>.* to ‘<user>’@’%’;
+    > FLUSH PRIVILEGES;
+
+    > USE <db>;
+
+Un exemple de table pour des utilisateurs :
+
+    CREATE TABLE users(
+        user_id INT NOT NULL AUTO_INCREMENT,
+        user_name VARCHAR(100) NOT NULL,
+        user_mail VARCHAR(355) NOT NULL,
+        user_password VARCHAR(128) NOT NULL,
+        user_iv VARCHAR(80) NOT NULL,
+        user_validate BOOLEAN NOT NULL DEFAULT 0,
+        PRIMARY KEY ( user_id )
+    );
+
+Si on veut faire des INSERT / SELECT a distance (depuis une page web sur un serveur local par exemple), remplacer bind-adress 127.0.0.1 par 0.0.0.0
+
+    $ sudo nano /etc/mysql/mariadb.conf.d/50-server.cnf 
+
+    bind-address            = 0.0.0.0
+
+Dans le fichier config de PHP si on veut utiliser PDO il faut aussi penser a enlever le “;”.
+
+    $ sudo apt-get install php7.0-mysql
+    $ sudo phpenmod pdo_mysql
+    $ sudo service nginx restart 
+
+
+
+
 
